@@ -380,7 +380,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-create PROCEDURE [dbo].[CreateOrUpdateProfileUserInfo]
+
+
+CREATE PROCEDURE [dbo].[CreateOrUpdateProfileUserInfo]
 @userId nvarchar(450),
 @fullName nvarchar(450),
 @aboutMe nvarchar(MAX),
@@ -389,7 +391,8 @@ create PROCEDURE [dbo].[CreateOrUpdateProfileUserInfo]
 @skypeLink nvarchar(MAX),
 @twitterLink nvarchar(MAX),
 @linkedinLink nvarchar(MAX),
-@githubLink nvarchar(MAX)
+@githubLink nvarchar(MAX),
+@reffererId nvarchar(MAX)
 AS
 BEGIN
 
@@ -406,12 +409,13 @@ BEGIN
 UPDATE [web-api.online].[dbo].[UsersInfo]
 SET FullName = @fullName,
     AboutMe = @aboutMe,
-	FacebookLink = @facebookLink,
-	InstagramLink = @instagramLink,
-	SkypeLink = @skypeLink,
-	TwitterLink = @twitterLink,
-	LinkedinLink = @linkedinLink,
-	GithubLink = @githubLink
+  FacebookLink = @facebookLink,
+  InstagramLink = @instagramLink,
+  SkypeLink = @skypeLink,
+  TwitterLink = @twitterLink,
+  LinkedinLink = @linkedinLink,
+  GithubLink = @githubLink,
+  ReffererId = @reffererId
 WHERE UserId = @userId
 
 END
@@ -743,6 +747,29 @@ WHERE Number = @number
 
 END
 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+create PROCEDURE [dbo].[GetQiwiAcoountCashOut]
+@amount float
+
+AS
+BEGIN
+--declare @userId nvarchar(450);
+--set @userId = '08d803ba-a9fb-430e-a0b9-d4a366aeaee7'
+
+
+SELECT TOP 1 *
+
+
+FROM Phones 
+WHERE Balance > @amount
+order by Balance
+
+END
 GO
 SET ANSI_NULLS ON
 GO
@@ -1105,6 +1132,21 @@ BEGIN
 UPDATE [web-api.online].[dbo].[UsersInfo]
 SET ReffererId = @refid
 WHERE UserId = @userId
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE  [dbo].[spUpdateQiwiAccountWhenHistoryChecked]
+@number nvarchar(50)
+AS
+BEGIN
+
+	UPDATE Phones
+	SET WhenHistoryChecked = GETDATE()
+	WHERE Number = @number;
 
 END
 GO
