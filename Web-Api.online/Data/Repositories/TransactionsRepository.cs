@@ -26,9 +26,9 @@ namespace Web_Api.online.Data.Repositories
             try
             {
                 List<IncomeTransactionTableModel> result =
-                    (List<IncomeTransactionTableModel>) await _db.QueryAsync<IncomeTransactionTableModel>
+                    (List<IncomeTransactionTableModel>)await _db.QueryAsync<IncomeTransactionTableModel>
                     ("GetLastIncomeTransactionsByUserId",
-                        new {userId = userId},
+                        new { userId = userId },
                         commandType: CommandType.StoredProcedure);
 
                 return result;
@@ -48,7 +48,7 @@ namespace Web_Api.online.Data.Repositories
                 parameters.Add("pageSize", pageSize);
 
                 List<IncomeTransactionTableModel> result =
-                    (List<IncomeTransactionTableModel>) await _db.QueryAsync<IncomeTransactionTableModel>
+                    (List<IncomeTransactionTableModel>)await _db.QueryAsync<IncomeTransactionTableModel>
                     ("GetIncomeTransactions_Paged",
                         parameters,
                         commandType: CommandType.StoredProcedure);
@@ -98,15 +98,14 @@ namespace Web_Api.online.Data.Repositories
             }
         }
 
-        public async Task<List<IncomeTransactionTableModel>> GetIncomeTransactions(string userId,
-            string currencyAcronim)
+        public async Task<List<IncomeTransactionTableModel>> GetIncomeTransactionsByUserId(string userId, string currencyAcronim)
         {
             try
             {
                 List<IncomeTransactionTableModel> result =
-                    (List<IncomeTransactionTableModel>) await _db.QueryAsync<IncomeTransactionTableModel>
+                    (List<IncomeTransactionTableModel>)await _db.QueryAsync<IncomeTransactionTableModel>
                     ("GetIncomeTransactionsByUserIdAndCurrencyAcronim",
-                        new {userId = userId, currencyAcronim = currencyAcronim},
+                        new { userId = userId, currencyAcronim = currencyAcronim },
                         commandType: CommandType.StoredProcedure);
 
                 return result;

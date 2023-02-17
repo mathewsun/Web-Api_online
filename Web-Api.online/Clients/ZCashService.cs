@@ -114,7 +114,7 @@ namespace Web_Api.online.Clients
 
             List<IncomeWalletTableModel> incomeZecWallets = await _walletsRepository.GetUserIncomeWalletsByAcronimAsync(userId, "ZEC");
 
-            List<IncomeTransactionTableModel> transactionModels = await _transactionsRepository.GetIncomeTransactions(userId, "ZEC");
+            List<IncomeTransactionTableModel> transactionModels = await _transactionsRepository.GetIncomeTransactionsByUserId(userId, "ZEC");
             List<string> savedTransactions = transactionModels.Select(x => x.TransactionHash).ToList();
 
             foreach (var incomeZecWallet in incomeZecWallets)
