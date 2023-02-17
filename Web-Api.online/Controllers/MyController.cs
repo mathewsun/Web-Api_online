@@ -22,6 +22,7 @@ namespace Web_Api.online.Controllers
     {
         private readonly IEventsRepository _eventsRepository;
         private readonly TransactionsRepository _transactionsRepository;
+        private readonly IOutcomeTransactionRepository _outcomeTransactionRepository;
         private readonly UsersInfoRepository _usersInfoRepository;
         private readonly UserManager<IdentityUser> _usersManager;
         private readonly WalletsRepository _walletsRepository;
@@ -29,12 +30,14 @@ namespace Web_Api.online.Controllers
         public MyController(
             IEventsRepository eventsRepository,
             TransactionsRepository transactionsRepository,
+            IOutcomeTransactionRepository outcomeTransactionRepository,
             UsersInfoRepository usersInfoRepository,
             UserManager<IdentityUser> usersManager,
             WalletsRepository walletsRepository,
             UserRepository userRepository)
         {
             _transactionsRepository = transactionsRepository;
+            _outcomeTransactionRepository = outcomeTransactionRepository;
             _eventsRepository = eventsRepository;
             _usersInfoRepository = usersInfoRepository;
             _usersManager = usersManager;
@@ -132,6 +135,29 @@ namespace Web_Api.online.Controllers
             return View(viewModel);
         }
 
+        public async Task<IActionResult> Outcomes(SortModel model)
+        {
+            int pageSize = 15;
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Redirect("/Login%2FMy%2FEvents");
+            }
+
+            var userOutcomes = await _outcomeTransactionRepository.GetOutcomeTransactionsByUserIdPaged(userId, model.Page, pageSize);
+
+            MyOutcomeTransactionsViewModel viewModel = new MyOutcomeTransactionsViewModel
+            {
+                PageViewModel = new PageViewModel(userOutcomes.Count, model.Page, pageSize),
+
+                OutcomeTransactions = userOutcomes ?? new List<OutcomeTransactionTableModel>()
+            };
+
+            return View(viewModel);
+        }
+
         public async Task<IActionResult> Events()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -145,7 +171,6 @@ namespace Web_Api.online.Controllers
 
             return View(result);
         }
-
 
         public async Task<IActionResult> MyRefferals(SortModel model)
         {

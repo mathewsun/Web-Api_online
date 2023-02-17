@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
 using Web_Api.online.Data.Repositories.Abstract;
-using Web_Api.online.Models.StoredProcedures;
 using Web_Api.online.Models.Tables;
 
 namespace Web_Api.online.Data.Repositories
@@ -84,28 +82,6 @@ namespace Web_Api.online.Data.Repositories
             }
         }
 
-        public async Task<List<spGetOutcomeTransactions_Paged>> GetPagedOutcomeTransactions(int page, int pageSize)
-        {
-            try
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("page", page);
-                parameters.Add("pageSize", pageSize);
-
-                List<spGetOutcomeTransactions_Paged> result =
-                    (List<spGetOutcomeTransactions_Paged>)await _db.QueryAsync<spGetOutcomeTransactions_Paged>
-                    ("GetOutcomeTransactions_Paged",
-                        parameters,
-                        commandType: CommandType.StoredProcedure);
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
         public async Task<int> GetCountOfOutcomeTransactions()
         {
             try
@@ -117,6 +93,29 @@ namespace Web_Api.online.Data.Repositories
             catch (Exception exc)
             {
                 return 0;
+            }
+        }
+
+        public async Task<List<OutcomeTransactionTableModel>> GetOutcomeTransactionsByUserIdPaged(string userId, int page, int pageSize)
+        {
+            try
+            {
+                var p = new DynamicParameters();
+                p.Add("userId", userId);
+                p.Add("page", page);
+                p.Add("pageSize", pageSize);
+
+                List<OutcomeTransactionTableModel> result =
+                    (List<OutcomeTransactionTableModel>)await _db.QueryAsync<OutcomeTransactionTableModel>
+                    ("GetOutcomeTransactionsByUserId_Paged",
+                        p,
+                        commandType: CommandType.StoredProcedure);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
     }
